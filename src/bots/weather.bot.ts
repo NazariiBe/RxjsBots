@@ -1,7 +1,7 @@
 import { registry, Bot, hasWord, Reply } from '../bot';
 import { currentWeather, WeatherConditions } from './weather.service';
 import { pipe, fromEvent } from 'rxjs';
-import { map, mergeMap, filter, flatMap, debounceTime } from 'rxjs/operators';
+import { map, mergeMap, filter, debounceTime, switchMap, distinctUntilChanged } from 'rxjs/operators';
 
 const autocompleteUrl: string = "http://localhost:3000/cities";
 const suggestions = document.querySelector('#suggestions');
@@ -27,10 +27,13 @@ const isLongEnough = (m: string) => m.length > 1
 
 fromEvent(document.querySelector('input[name="message"]'), 'input').pipe(
   map(getValueFromEvent),
+  debounceTime(250),
+  distinctUntilChanged(),
   filter(mention),
   map(clearMsg),
   filter(isLongEnough),
-  flatMap(requestOptions)
+  switchMap(requestOptions),
+  map((data: Array<object>) => data.reduce((acc, curr) => acc + formatOption(curr), ""))
 ).subscribe((data: string) => suggestions.innerHTML = data)
 
 const formatOption = (obj: any) => `<option>@${WEATHER_BOT.name} ${obj.name}</option>`
@@ -38,7 +41,4 @@ const formatOption = (obj: any) => `<option>@${WEATHER_BOT.name} ${obj.name}</op
 function requestOptions(city: string) {
   return fetch(`${autocompleteUrl}?name_like=^${city}&_limit=10`)
     .then(r => r.json())
-    .then((data: Array<any>) => 
-      data.reduce((acc, curr) => acc + formatOption(curr), "")
-    )
 }
