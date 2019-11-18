@@ -17,8 +17,9 @@ function extractWeatherConditions(res: any): WeatherConditions {
   } as WeatherConditions;
 }
 
-export function currentWeather(): Promise<WeatherConditions> {
-  return fetch(`${WEATHER_PATH}?q=Cherkasy,ua&lang=ru&units=metric&APPID=${API_KEY}`)
+export function currentWeather(city: string): Promise<any> {
+  return fetch(`${WEATHER_PATH}?q=${city},ua&lang=ru&units=metric&APPID=${API_KEY}`)
     .then(r => r.json())
     .then(extractWeatherConditions)
+    .catch(() => undefined)
 }
