@@ -16,7 +16,7 @@ registry.addBot(WEATHER_BOT, pipe(
   mergeMap(currentWeather),
   map<WeatherConditions, string>(w => {
     if (!w) return "Cannot get weather conditions for this city";
-    return `${w.temp}C, ${w.humidity}%, ${w.description}`;
+    return `Weather in ${w.name}: ${w.temp}C, ${w.humidity}%, ${w.description}`;
   })
 ));
 
