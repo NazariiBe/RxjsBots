@@ -21,7 +21,7 @@
     "webpack-dev-server": "^2.11.5"
   },
   "dependencies": {
-    "lodash": "^4.17.14",
+    "lodash": "^4.17.19",
     "rxjs": "^6.5.2"
   }
 }
